@@ -12,6 +12,7 @@ module.exports = {
    * @param {KoaContext} ctx - koa context
    */
   async findOne(ctx) {
+    console.log("updating fine one")
     const { id } = ctx.params;
     const role = await getService('role').findOneWithUsersCount({ id });
 
@@ -43,10 +44,13 @@ module.exports = {
   async update(ctx) {
     const { id } = ctx.params;
     const { body } = ctx.request;
+    console.log("updating")
 
     const roleService = getService('role');
+    console.log("roleService", roleService)
 
     await validateRoleUpdateInput(body);
+    
 
     const role = await roleService.findOne({ id });
 

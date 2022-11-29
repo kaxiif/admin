@@ -11,6 +11,7 @@ const userCreationSchema = yup
     firstname: validators.firstname.required(),
     lastname: validators.lastname,
     roles: validators.roles.min(1),
+    relations: validators.relations,
     preferedLanguage: yup.string().nullable(),
   })
   .noUnknown();
@@ -41,6 +42,7 @@ const userUpdateSchema = yup
     password: validators.password.notNull(),
     isActive: yup.bool().notNull(),
     roles: validators.roles.min(1).notNull(),
+    relations: validators.relations,
   })
   .noUnknown();
 

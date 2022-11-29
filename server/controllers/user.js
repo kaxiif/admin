@@ -75,8 +75,10 @@ module.exports = {
   async update(ctx) {
     const { id } = ctx.params;
     const { body: input } = ctx.request;
-
+    
+ 
     await validateUserUpdateInput(input);
+  
 
     if (_.has(input, 'email')) {
       const uniqueEmailCheck = await getService('user').exists({

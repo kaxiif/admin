@@ -73,6 +73,11 @@ module.exports = {
       configurable: false,
       private: true,
     },
+    relations: {
+      type: 'json',
+      configurable: false,
+      private: true,
+    },
     roles: {
       configurable: false,
       private: true,
