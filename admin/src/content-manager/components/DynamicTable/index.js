@@ -87,9 +87,16 @@ const DynamicTable = ({
           sortable: true,
         },
         cellFormatter(cellData) {
-          const isPublished = !isEmpty(cellData.publishedAt);
-
-          return <State isPublished={isPublished} />;
+          let Published = !isEmpty(cellData.publishedAt);
+          let Scheduled = cellData.scheduled;
+          
+          let isPublished = {
+            isPublished: Published,
+            isScheduled: Scheduled
+          }
+          
+          console.log('isPublished', isPublished);
+          return <State isPublished={isPublished  }  />;
         },
       },
     ];

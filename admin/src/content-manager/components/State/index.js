@@ -6,9 +6,10 @@ import { Box } from '@strapi/design-system/Box';
 import { getTrad } from '../../utils';
 
 const State = ({ isPublished }) => {
+  console.log('isPublished.Published', isPublished);
   const { formatMessage } = useIntl();
   const content = formatMessage({
-    id: getTrad(`containers.List.${isPublished ? 'published' : 'draft'}`),
+    id: getTrad(`containers.List.${isPublished.isPublished ? 'published' : (isPublished.isScheduled ? 'scheduled' : 'draft')}`),
   });
   const background = isPublished ? 'success100' : 'secondary100';
   const textColor = isPublished ? 'success700' : 'secondary700';

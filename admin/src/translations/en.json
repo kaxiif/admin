@@ -602,6 +602,7 @@
   "content-manager.containers.Home.pluginHeaderTitle": "Content Manager",
   "content-manager.containers.List.draft": "Draft",
   "content-manager.containers.List.errorFetchRecords": "Error",
+  "content-manager.containers.List.scheduled": "Scheduled",
   "content-manager.containers.List.published": "Published",
   "content-manager.containers.ListPage.displayedFields": "Displayed Fields",
   "content-manager.containers.ListPage.items": "{number, plural, =0 {items} one {item} other {items}}",

@@ -60,6 +60,7 @@ module.exports = {
 
   async findOne(ctx) {
     const { id } = ctx.params;
+    
 
     const user = await getService('user').findOne(id);
 
@@ -67,8 +68,22 @@ module.exports = {
       return ctx.notFound('User does not exist');
     }
 
+    const users = await getService('user').findPage(ctx.query);
+
+    const authors = users.results.filter(user => user.roles[0].name === "Author");
+
+   
+    let userInfo = getService('user').sanitizeUser(user);
+ 
+    if (userInfo.roles[0].name === "Editor") {
+
+      userInfo = Object.assign(userInfo, { authors: authors });
+    }
+
+
+
     ctx.body = {
-      data: getService('user').sanitizeUser(user),
+      data: userInfo,
     };
   },
 
