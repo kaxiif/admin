@@ -34,7 +34,6 @@ import { fetchUser, putUser } from './utils/api';
 import layout from './utils/layout';
 import { editValidation } from '../utils/validations/users';
 import SelectRoles from '../components/SelectRoles';
-import Input from '@strapi/plugin-users-permissions/admin/src/components/FormModal/Input';
 
 const fieldsToPick = ['email', 'firstname', 'lastname', 'username', 'isActive', 'roles'];
 
@@ -255,7 +254,7 @@ const EditPage = ({ canUpdate }) => {
                       <Typography variant="delta" as="h2">
                         {formatMessage({
                           id: 'global.roles',
-                          defaultMessage: "User's krole",
+                          defaultMessage: "User's role",
                         })}
                       </Typography>
                       <Grid gap={5}>
@@ -266,21 +265,6 @@ const EditPage = ({ canUpdate }) => {
                             onChange={handleChange}
                             value={values.roles}
                           />
-                        </GridItem>
-                      </Grid>
-                    </Stack>
-                    {/* create a field from where we can select admin user and users id will be selected */}
-                    <Stack spacing={4}>
-                      <Typography variant="delta" as="h2">
-                        {formatMessage({
-                          id: 'admin.users.form.block-title.admin',
-                          defaultMessage: "Author Id",
-                        })}
-                      </Typography>
-                      <Grid gap={5}>
-                        <GridItem col={6} xs={12}>
-                          <Input name="relations" type="text" />
-                          
                         </GridItem>
                       </Grid>
                     </Stack>

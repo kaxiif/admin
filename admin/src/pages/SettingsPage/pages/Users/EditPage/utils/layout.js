@@ -99,21 +99,6 @@ const layout = [
   ],
   [
     {
-      relations: [
-        {
-     
-          name: 'admin_users',
-          type: 'string',
-          size: {
-            col: 6,
-            xs: 12,
-          },
-        },
-      ]
-    }
-  ],
-  [
-    {
       intlLabel: {
         id: 'Auth.form.active.label',
         defaultMessage: 'Active',
