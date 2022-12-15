@@ -9,6 +9,7 @@ import { useHistory, useLocation, Link as ReactRouterLink } from 'react-router-d
 import get from 'lodash/get';
 import { stringify } from 'qs';
 import axios from 'axios';
+import { LinkButton } from "@strapi/design-system/v2/LinkButton";
 
 import {
   NoPermissions,
@@ -276,14 +277,33 @@ function ListView({
         navigationAction={
           <Link startIcon={<ArrowLeft />} to="/content-manager/">
             {formatMessage({
-              id: 'global.back',
-              defaultMessage: 'Back',
+              id: "global.back",
+              defaultMessage: "Back",
             })}
           </Link>
         }
       />
+      <LinkButton
+        className="sc-eCImPb dhsJvg sc-iCfMLu lerczV"
+        style={{
+          float: "right",
+          marginRight: "20px",
+          marginLeft: "10px",
+          marginTop: "3px",
+        }}
+        variant="tertiary"
+        href={`localhost:3000/admin`}
+        isExternal
+      >
+        {formatMessage({
+          id: `admin.pages.MarketPlacePage.submit`,
+          defaultMessage: `Sort Articles`,
+        })}
+      </LinkButton>
       {!canRead && (
-        <ActionLayout endActions={<InjectionZone area="contentManager.listView.actions" />} />
+        <ActionLayout
+          endActions={<InjectionZone area="contentManager.listView.actions" />}
+        />
       )}
       {canRead && (
         <ActionLayout
@@ -291,18 +311,23 @@ function ListView({
             <>
               <InjectionZone area="contentManager.listView.actions" />
               <FieldPicker layout={layout} />
-              <CheckPermissions permissions={cmPermissions.collectionTypesConfigurations}>
+              <CheckPermissions
+                permissions={cmPermissions.collectionTypesConfigurations}
+              >
                 <ConfigureLayoutBox paddingTop={1} paddingBottom={1}>
                   <IconButton
                     onClick={() => {
-                      trackUsage('willEditListLayout');
+                      trackUsage("willEditListLayout");
                     }}
                     forwardedAs={ReactRouterLink}
-                    to={{ pathname: `${slug}/configurations/list`, search: pluginsQueryParams }}
+                    to={{
+                      pathname: `${slug}/configurations/list`,
+                      search: pluginsQueryParams,
+                    }}
                     icon={<Cog />}
                     label={formatMessage({
-                      id: 'app.links.configure-view',
-                      defaultMessage: 'Configure the view',
+                      id: "app.links.configure-view",
+                      defaultMessage: "Configure the view",
                     })}
                   />
                 </ConfigureLayoutBox>
@@ -314,18 +339,25 @@ function ListView({
               {isSearchable && (
                 <SearchURLQuery
                   label={formatMessage(
-                    { id: 'app.component.search.label', defaultMessage: 'Search for {target}' },
+                    {
+                      id: "app.component.search.label",
+                      defaultMessage: "Search for {target}",
+                    },
                     { target: headerLayoutTitle }
                   )}
                   placeholder={formatMessage({
-                    id: 'global.search',
-                    defaultMessage: 'Search',
+                    id: "global.search",
+                    defaultMessage: "Search",
                   })}
                   trackedEvent="didSearch"
                 />
               )}
               {isFilterable && (
-                <AttributeFilter contentType={contentType} slug={slug} metadatas={metadatas} />
+                <AttributeFilter
+                  contentType={contentType}
+                  slug={slug}
+                  metadatas={metadatas}
+                />
               )}
             </>
           }
@@ -345,9 +377,11 @@ function ListView({
               // FIXME: remove the layout props drilling
               layout={layout}
               rows={data}
-              action={getCreateAction({ variant: 'secondary' })}
+              action={getCreateAction({ variant: "secondary" })}
             />
-            <PaginationFooter pagination={{ pageCount: pagination?.pageCount || 1 }} />
+            <PaginationFooter
+              pagination={{ pageCount: pagination?.pageCount || 1 }}
+            />
           </>
         ) : (
           <NoPermissions />
