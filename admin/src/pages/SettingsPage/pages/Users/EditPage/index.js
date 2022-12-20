@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useIntl } from 'react-intl';
-import PropTypes from 'prop-types';
+import PropTypes, { string } from 'prop-types';
 import pick from 'lodash/pick';
 import get from 'lodash/get';
 import omit from 'lodash/omit';
@@ -34,6 +34,10 @@ import { fetchUser, putUser } from './utils/api';
 import layout from './utils/layout';
 import { editValidation } from '../utils/validations/users';
 import SelectRoles from '../components/SelectRoles';
+import Select from 'react-select';
+import axios from 'axios';
+
+
 
 const fieldsToPick = ['email', 'firstname', 'lastname', 'username', 'isActive', 'roles'];
 
@@ -48,7 +52,7 @@ const EditPage = ({ canUpdate }) => {
   const toggleNotification = useNotification();
   const { lockApp, unlockApp } = useOverlayBlocker();
   useFocusWhenNavigate();
-
+  
   const { status, data } = useQuery(['user', id], () => fetchUser(id), {
     retry: false,
     keepPreviousData: false,
@@ -71,12 +75,109 @@ const EditPage = ({ canUpdate }) => {
       console.log(err.response.status);
     },
   });
+  
+  
+  let [selectedAuthor, setselectedAuthor] = React.useState([]);
+ 
+  useEffect(() => {
+    if (data) {
+      
+      if(data.relations) {
+        setSelectedValue(data.relations);
+      }
+      
+      if (data.authors) {
+        
+        setAuthors(data.authors);
+     
+        data.authors.forEach(author => {
+            if(data.relations) {
+     
+          if (data.relations.includes(author.id)) {
+  
+            selectedAuthor.push(author);
+       
+          }
+        }
+
+        });
+     
+      setTemp(selectedAuthor);
+
+      if(data.authors.length > 0) {
+     
+        data.authors.forEach(author => {
+          authorData.push({value: author.id, label: author.Name});
+        }
+        );
+        
+      }
+
+      
+
+    }
+    }
+  }, [data]);
+   let [authorData, setAuthorData] = React.useState([]);
+
+
+  let [selectedValue, setSelectedValue] = React.useState([]);
+  const handleChangeForAuthor = (e) => {
+    setSelectedValue(Array.isArray(e) ? e.map(x => x.value) : []);
+
+
+  };
+
+  
+  const handleSubmitAuthor = async (event) => {
+    event.preventDefault();
+
+    let backendUrl = window.location.origin;
+
+    backendUrl = backendUrl.replace('/admin/settings/users/:id', '');
+
+   
+    
+    
+    let token = localStorage.getItem('jwtToken');
+
+    token = token.replace(/['"]+/g, '');
+
+
+
+try {
+  axios.put(`${backendUrl}/admin/users/${id}`, {
+    // add headers to the request
+    
+      'relations': selectedValue
+    
+  },
+  {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    }
+  })
+    .then((response) => {
+      console.log('response', response);
+    }
+    )
+}
+
+    catch (err) {
+      console.log(err);
+    }
+    
+  };
+
+
 
   const handleSubmit = async (body, actions) => {
     lockApp();
 
     try {
       const data = await putUser(id, omit(body, 'confirmPassword'));
+     
 
       toggleNotification({
         type: 'success',
@@ -113,6 +214,8 @@ const EditPage = ({ canUpdate }) => {
     unlockApp();
   };
 
+  
+
   const isLoading = status !== 'success';
   const headerLabel = isLoading
     ? { id: 'app.containers.Users.EditPage.header.label-loading', defaultMessage: 'Edit user' }
@@ -124,6 +227,8 @@ const EditPage = ({ canUpdate }) => {
 
       return acc;
     }
+  
+
 
     acc[current] = data?.[current];
 
@@ -268,12 +373,51 @@ const EditPage = ({ canUpdate }) => {
                         </GridItem>
                       </Grid>
                     </Stack>
+                  
+                    {data.roles[0].name=="Editor" ? (
+                        <Stack spacing={4}>
+                        <Typography variant="delta" as="h2">
+                          <span for="roles" required="" id="roles-label" class="sc-fmciRz iSuFRY">
+                            <div
+                              class="sc-gyElHZ sc-gjNHFA gryXRR bGUbrO"
+                              style={{ paddingTop: "20px" }}
+                            >
+                              Select Authors<span class="sc-fmciRz sc-eXlEPa imCFua iXKoRS">*</span>
+                            </div>
+                          </span>
+                        </Typography>
+                        <Grid gap={5}>
+                      <GridItem col={6} xs={12}>
+                            {authorData ? (
+                                <Select
+                                  className="dropdown"
+                                  placeholder="Select Option"
+                                  value={selectedValue ? authorData.filter(obj => selectedValue.includes(obj.value)) : []} // set selected values
+                                  options={authorData} // set list of the data
+                                  onChange={handleChangeForAuthor} // assign onChange function
+                                  isMulti
+                                  isClearable
+                                />      
+                            )
+                              : ""}
+                            </GridItem>
+               
+                        </Grid>
+                        <button style={{ color: "white", marginTop: "10px", width:"15%" }} className='sc-eCImPb dhsJvg sc-iCfMLu iMvqQs' onClick={handleSubmitAuthor}>Submit</button>
+                        <p id="roles-hint" class="sc-fmciRz cQIhSl">An editor can have one or several authors</p>
+                      </Stack>
+                    )
+                      : ''
+                    }
                   </Box>
+                 
                 </Stack>
+                
               </ContentLayout>
             </Form>
           );
         }}
+       
       </Formik>
     </Main>
   );
@@ -284,3 +428,4 @@ EditPage.propTypes = {
 };
 
 export default EditPage;
+

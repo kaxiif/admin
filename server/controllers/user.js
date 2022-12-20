@@ -17,13 +17,16 @@ module.exports = {
 
     await validateUserCreationInput(cleanData);
 
-    const attributes = _.pick(cleanData, [
+    let attributes = _.pick(cleanData, [
       'firstname',
       'lastname',
       'email',
       'roles',
       'preferedLanguage',
     ]);
+    
+    
+    
 
     const userAlreadyExists = await getService('user').exists({
       email: attributes.email,
@@ -34,6 +37,22 @@ module.exports = {
     }
 
     const createdUser = await getService('user').create(attributes);
+    console.log(createdUser);
+
+    if (createdUser.roles[0].name === 'Author') {
+      let author = await strapi.entityService.create('api::author.author', {
+      data: {
+        Name: attributes.firstname + " " + attributes.lastname,
+        Email: attributes.email,
+          description: "Author",
+          relationWithAuthorUser: createdUser.id,
+        },
+        
+      });
+     
+    }
+
+      
 
     const userInfo = getService('user').sanitizeUser(createdUser);
 
@@ -68,9 +87,13 @@ module.exports = {
       return ctx.notFound('User does not exist');
     }
 
-    const users = await getService('user').findPage(ctx.query);
+    
+    const authors = await strapi.entityService.findMany('api::author.author', {
+      populate: '*',
+    });
 
-    const authors = users.results.filter(user => user.roles[0].name === "Author");
+    //const authors = await strapi.query('author.author').find();
+    console.log(authors);
 
    
     let userInfo = getService('user').sanitizeUser(user);
@@ -107,6 +130,27 @@ module.exports = {
     }
 
     const updatedUser = await getService('user').updateById(id, input);
+  
+  
+
+   
+
+    if (updatedUser.roles[0].name === "Author") {
+          let getAuthor = await strapi.entityService.findMany('api::author.author', {
+                filters: {
+                  relationWithAuthorUser: {
+                    $contains: updatedUser.id,
+                  },
+                },
+            });
+      const entry = await strapi.entityService.update('api::author.author', getAuthor[0].id, {
+            data: {
+                    Name: updatedUser.firstname + " " + updatedUser.lastname,
+                    Email: updatedUser.email,
+                  },
+          });
+
+    }
 
     if (!updatedUser) {
       return ctx.notFound('User does not exist');
@@ -121,6 +165,25 @@ module.exports = {
     const { id } = ctx.params;
 
     const deletedUser = await getService('user').deleteById(id);
+    console.log("deletedUser");
+    console.log(deletedUser);
+
+      if (deletedUser.roles[0].name === "Author") {
+        let getAuthor = await strapi.entityService.findMany('api::author.author', {
+          filters: {
+            relationWithAuthorUser: {
+              $contains: deletedUser.id,
+            },
+          },
+        });
+        console.log("getAuthor");
+        console.log(getAuthor);
+        
+        let entry = await strapi.entityService.delete('api::author.author', getAuthor[0].id);
+        console.log("entry");
+      }
+    
+    
 
     if (!deletedUser) {
       return ctx.notFound('User not found');
@@ -140,6 +203,27 @@ module.exports = {
     await validateUsersDeleteInput(body);
 
     const users = await getService('user').deleteByIds(body.ids);
+    console.log("users deleted");
+    console.log(users);
+    
+
+    users.forEach(async element => {
+      if (element.roles[0].name === "Author") {
+        let getAuthor = await strapi.entityService.findMany('api::author.author', {
+          filters: {
+            relationWithAuthorUser: {
+              $contains: element.id,
+            },
+          },
+        });
+        console.log("getAuthor");
+        console.log(getAuthor);
+        
+        let entry = await strapi.entityService.delete('api::author.author', getAuthor[0].id);
+        console.log("entry");
+      }
+    });
+  
 
     const sanitizedUsers = users.map(getService('user').sanitizeUser);
 
