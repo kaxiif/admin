@@ -113,16 +113,24 @@ const EditPage = ({ canUpdate }) => {
     setSelectedValue(Array.isArray(e) ? e.map((x) => x.value) : []);
   };
 
+  // get current theme
+  let theme = localStorage.getItem("STRAPI_THEME");
+
   const handleSubmitAuthor = async (event) => {
     event.preventDefault();
 
     let backendUrl = window.location.origin;
 
-    backendUrl = backendUrl.replace("/admin/settings/users/:id", "");
+    let token;
 
-    let token = localStorage.getItem("jwtToken");
+    token = sessionStorage.getItem("jwtToken");
 
-    token = token.replace(/['"]+/g, "");
+    if (!token) {
+      token = localStorage.getItem("jwtToken");
+    }
+    if (token) {
+      token = token.replace(/['"]+/g, "");
+    }
 
     try {
       axios
@@ -414,7 +422,12 @@ const EditPage = ({ canUpdate }) => {
                             marginTop: "10px",
                             width: "15%",
                           }}
-                          className="sc-eCImPb dhsJvg sc-iCfMLu iMvqQs"
+                          type="button"
+                          className={
+                            theme === "dark"
+                              ? "sc-eCImPb dhsJvg sc-iCfMLu iMvqQs"
+                              : "sc-eCImPb igeLKl sc-iCfMLu jbqiHM"
+                          }
                           onClick={handleSubmitAuthor}
                         >
                           Submit
