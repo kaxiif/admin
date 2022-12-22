@@ -40,15 +40,15 @@ module.exports = {
     console.log(createdUser);
 
     if (createdUser.roles[0].name === 'Author') {
-      let author = await strapi.entityService.create('api::author.author', {
-      data: {
-        Name: attributes.firstname + " " + attributes.lastname,
-        Email: attributes.email,
-          description: "Author",
-          relationWithAuthorUser: createdUser.id,
-        },
+      // let author = await strapi.entityService.create('api::author.author', {
+      // data: {
+      //   Name: attributes.firstname + " " + attributes.lastname,
+      //   Email: attributes.email,
+      //     description: "Author",
+      //     relationWithAuthorUser: createdUser.id,
+      //   },
         
-      });
+      // });
      
     }
 
@@ -142,7 +142,8 @@ module.exports = {
                     $contains: updatedUser.id,
                   },
                 },
-            });
+          });
+      console.log(getAuthor);
       const entry = await strapi.entityService.update('api::author.author', getAuthor[0].id, {
             data: {
                     Name: updatedUser.firstname + " " + updatedUser.lastname,

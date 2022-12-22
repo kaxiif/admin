@@ -33,6 +33,24 @@ module.exports = {
     }
 
     const updatedUser = await userService.updateById(ctx.state.user.id, userInfo);
+    console.log(updatedUser);
+    if (updatedUser.roles[0].name === "Author") {
+          let getAuthor = await strapi.entityService.findMany('api::author.author', {
+                filters: {
+                  relationWithAuthorUser: {
+                    $contains: updatedUser.id,
+                  },
+                },
+          });
+      console.log(getAuthor);
+      const entry = await strapi.entityService.update('api::author.author', getAuthor[0].id, {
+            data: {
+                    Name: updatedUser.firstname + " " + updatedUser.lastname,
+                    Email: updatedUser.email,
+                  },
+          });
+
+    }
 
     ctx.body = {
       data: userService.sanitizeUser(updatedUser),
