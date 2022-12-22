@@ -37,6 +37,7 @@ import SelectRoles from "../components/SelectRoles";
 import Select from "react-select";
 import axios from "axios";
 
+
 const fieldsToPick = [
   "email",
   "firstname",
@@ -82,6 +83,7 @@ const EditPage = ({ canUpdate }) => {
   });
 
   let [selectedAuthor, setselectedAuthor] = React.useState([]);
+  
 
   useEffect(() => {
     if (data) {
@@ -112,25 +114,31 @@ const EditPage = ({ canUpdate }) => {
   const handleChangeForAuthor = (e) => {
     setSelectedValue(Array.isArray(e) ? e.map((x) => x.value) : []);
   };
-
+  let [checkIcon, setCheckIcon] = React.useState(false);
+  let [buttonMsg, setButtonMsg] = React.useState("Submit");
   // get current theme
   let theme = localStorage.getItem("STRAPI_THEME");
 
   const handleSubmitAuthor = async (event) => {
     event.preventDefault();
+    setCheckIcon(false);
+    setButtonMsg("Submitting...");
 
     let backendUrl = window.location.origin;
+    
 
     let token;
 
-    token = sessionStorage.getItem("jwtToken");
-
+    token = sessionStorage.getItem('jwtToken');
+    
     if (!token) {
-      token = localStorage.getItem("jwtToken");
+      token = localStorage.getItem('jwtToken');
+      
     }
     if (token) {
-      token = token.replace(/['"]+/g, "");
+      token = token.replace(/['"]+/g, ''); 
     }
+
 
     try {
       axios
@@ -150,11 +158,16 @@ const EditPage = ({ canUpdate }) => {
         )
         .then((response) => {
           console.log("response", response);
+          setButtonMsg("Submit");
+          setCheckIcon(true);
         });
     } catch (err) {
       console.log(err);
+      setButtonMsg("Try again");
+      setCheckIcon(true);
     }
   };
+
 
   const handleSubmit = async (body, actions) => {
     lockApp();
@@ -420,7 +433,7 @@ const EditPage = ({ canUpdate }) => {
                           style={{
                             color: "white",
                             marginTop: "10px",
-                            width: "15%",
+                            width: "fit-content",
                           }}
                           type="button"
                           className={
@@ -429,8 +442,12 @@ const EditPage = ({ canUpdate }) => {
                               : "sc-eCImPb igeLKl sc-iCfMLu jbqiHM"
                           }
                           onClick={handleSubmitAuthor}
-                        >
-                          Submit
+                        > 
+                          {buttonMsg + " "}
+                          { checkIcon ? ( <Check  style={{
+                            marginLeft: "10px",
+                          }}
+                           /> ) : ( "" ) }
                         </button>
                         <p id="roles-hint" class="sc-fmciRz cQIhSl">
                           An editor can have one or several authors
