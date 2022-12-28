@@ -11,6 +11,7 @@ import { stringify } from 'qs';
 import axios from 'axios';
 import { LinkButton } from '@strapi/design-system/v2/LinkButton';
 
+
 import {
   NoPermissions,
   CheckPermissions,
@@ -157,6 +158,46 @@ function ListView({
     },
     [formatMessage, getData, getDataSucceeded, notifyStatus, push, toggleNotification]
   );
+  let getUerLogid;
+  
+  const handleSubmitAuthor = async (event) => {
+    event.preventDefault();
+   
+    let backendUrl = window.location.origin;
+    let getUerLog = await axios.get(`${backendUrl}/api/user-logs`);
+    if (getUerLog.data.data.checkAccess == false) {
+    }
+  
+    if (getUerLogid != 0) {
+      try {
+        axios
+          .put(
+            `${backendUrl}/api/user-logs/${getUerLog.data.data[0].id}`,
+            {
+              // add headers to the request
+              data: {
+                checkAccess: true,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              
+              },
+            }
+          )
+          .then((response) => {
+            console.log("response", response);
+            // redirect to the home page
+            window.location.href = `http://localhost:3000/admin`;
+      
+          });
+      } catch (err) {
+        console.log(err);
+   
+      }
+    }
+  };
 
   const handleConfirmDeleteAllData = useCallback(
     async (ids) => {
@@ -291,11 +332,11 @@ function ListView({
         }
       />
            <LinkButton className="sc-eCImPb dhsJvg sc-iCfMLu lerczV" style={{float: "right", marginRight: "20px", marginLeft: "10px", marginTop: "3px"}}
-           
-            variant="tertiary"
-            href={`http://localhost:3000/admin?jwt=gjgdgngdnsgdgndgdgndojdo`}
-            isExternal
-            target="_blank"
+           onClick={handleSubmitAuthor}
+            // variant="tertiary"
+            // href={`http://localhost:3000/admin?jwt=gjgdgngdnsgdgndgdgndojdo`}
+            // isExternal
+            // target="_blank"
    
 
           >
