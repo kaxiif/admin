@@ -29,23 +29,35 @@ module.exports = {
           });
           throw new ApplicationError(info.message);
         }
+       
 
         ctx.state.user = user;
+        
+        
 
         strapi.eventHub.emit('admin.auth.success', { user, provider: 'local' });
 
         return next();
       })(ctx, next);
     },
-    (ctx) => {
-      const { user } = ctx.state;
-
-      ctx.body = {
+    async (ctx) => {
+      let { user } = ctx.state;
+       let getUserByIdVar;
+            getUserByIdVar = await getService('user').findOne(user.id);
+            if (getUserByIdVar) {
+              
+              user = { ...user, role: getUserByIdVar.roles[0].name };
+              console.log(user);
+                 ctx.body = {
         data: {
           token: getService('token').createJwtToken(user),
-          user: getService('user').sanitizeUser(ctx.state.user), // TODO: fetch more detailed info
+          user: getUserByIdVar, // TODO: fetch more detailed info
         },
       };
+               
+            }
+
+   
     },
   ]),
 
@@ -87,13 +99,27 @@ module.exports = {
     await validateRegistrationInput(input);
 
     const user = await getService('user').register(input);
+    let getUserByIdVar;
+            getUserByIdVar = await getService('user').findOne(user.id);
+            if (getUserByIdVar) {
+              
+              user = { ...user, role: getUserByIdVar.roles[0].name };
+              console.log(user);
+                 ctx.body = {
+        data: {
+          token: getService('token').createJwtToken(user),
+          user: getUserByIdVar, // TODO: fetch more detailed info
+        },
+      };
+               
+            }
 
-    ctx.body = {
-      data: {
-        token: getService('token').createJwtToken(user),
-        user: getService('user').sanitizeUser(user),
-      },
-    };
+    // ctx.body = {
+    //   data: {
+    //     token: getService('token').createJwtToken(user),
+    //     user: getService('user').sanitizeUser(user),
+    //   },
+    // };
   },
 
   async registerAdmin(ctx) {
@@ -124,12 +150,26 @@ module.exports = {
 
     strapi.telemetry.send('didCreateFirstAdmin');
 
-    ctx.body = {
-      data: {
-        token: getService('token').createJwtToken(user),
-        user: getService('user').sanitizeUser(user),
-      },
-    };
+    // ctx.body = {
+    //   data: {
+    //     token: getService('token').createJwtToken(user),
+    //     user: getService('user').sanitizeUser(user),
+    //   },
+    // };
+    let getUserByIdVar;
+            getUserByIdVar = await getService('user').findOne(user.id);
+            if (getUserByIdVar) {
+              
+              user = { ...user, role: getUserByIdVar.roles[0].name };
+              console.log(user);
+                 ctx.body = {
+        data: {
+          token: getService('token').createJwtToken(user),
+          user: getUserByIdVar, // TODO: fetch more detailed info
+        },
+      };
+               
+            }
   },
 
   async forgotPassword(ctx) {

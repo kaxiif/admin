@@ -28,7 +28,7 @@ module.exports = [
   {
     method: 'POST',
     path: '/users',
-    handler: 'user.create',
+    handler: 'user.createe',
     config: {
       policies: [
         'admin::isAuthenticatedAdmin',
@@ -61,7 +61,7 @@ module.exports = [
   {
     method: 'PUT',
     path: '/users/:id',
-    handler: 'user.update',
+    handler: 'user.updatee',
     config: {
       policies: [
         'admin::isAuthenticatedAdmin',
@@ -72,7 +72,7 @@ module.exports = [
   {
     method: 'DELETE',
     path: '/users/:id',
-    handler: 'user.deleteOne',
+    handler: 'user.deleteOnee',
     config: {
       policies: [{ name: 'admin::hasPermissions', config: { actions: ['admin::users.delete'] } }],
     },

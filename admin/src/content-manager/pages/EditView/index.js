@@ -91,6 +91,15 @@ const EditView = ({
 
   const relationsLayout = currentContentTypeLayoutData.layouts.editRelations;
   const displayedRelationsLength = relationsLayout.length;
+ 
+
+  let user ;
+    user = JSON.parse(localStorage.getItem('userInfo'));
+  if (!user) {
+   
+      user = JSON.parse(sessionStorage.getItem('userInfo'));
+  }
+ 
 
   return (
     <DataManagementWrapper allLayoutData={layout} slug={slug} id={id} origin={origin}>
@@ -248,7 +257,10 @@ const EditView = ({
                         shadow="tableShadow"
                       >
                         <Informations />
-                        <InjectionZone area="contentManager.editView.informations" />
+                        {
+                          user.roles[0].name != 'Author'?  <InjectionZone area="contentManager.editView.informations" />  :""
+                        }
+                        
                       </Box>
                       {displayedRelationsLength > 0 && (
                         <Box

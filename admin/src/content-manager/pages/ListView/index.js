@@ -189,7 +189,7 @@ function ListView({
           .then((response) => {
             console.log("response", response);
             // redirect to the home page
-            window.location.href = `http://localhost:3000/admin`;
+            window.location.href = `https://republicsentinel.com/admin`;
       
           });
       } catch (err) {
