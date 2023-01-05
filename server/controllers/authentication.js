@@ -46,7 +46,7 @@ module.exports = {
             getUserByIdVar = await getService('user').findOne(user.id);
             if (getUserByIdVar) {
               
-              user = { ...user, role: getUserByIdVar.roles[0].name };
+              // user = { ...user, role: getUserByIdVar.roles[0].name };
               console.log(user);
                  ctx.body = {
         data: {
@@ -103,8 +103,9 @@ module.exports = {
             getUserByIdVar = await getService('user').findOne(user.id);
             if (getUserByIdVar) {
               
-              user = { ...user, role: getUserByIdVar.roles[0].name };
+              // user = { ...user, role: getUserByIdVar.roles[0].name };
               console.log(user);
+              console.log(getUserByIdVar);
                  ctx.body = {
         data: {
           token: getService('token').createJwtToken(user),
@@ -160,7 +161,7 @@ module.exports = {
             getUserByIdVar = await getService('user').findOne(user.id);
             if (getUserByIdVar) {
               
-              user = { ...user, role: getUserByIdVar.roles[0].name };
+              // user = { ...user, role: getUserByIdVar.roles[0].name };
               console.log(user);
                  ctx.body = {
         data: {
